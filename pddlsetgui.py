@@ -31,7 +31,7 @@ def tester():
 
 #########################################
 #     windows class
-######################################3##
+#########################################
 class Application(tk.Frame):
     def __init__(self, master=None):
         super().__init__(master)
@@ -42,6 +42,8 @@ class Application(tk.Frame):
         self.airset = tk.Button(self)
         self.airset["text"] = "set pddl air side"
         self.airset["command"] = self.telnetair
+        self.Button1["width"] = 100
+        self.Button1["height"] = 50
         self.airset.pack(side="top")
 
         self.quit = tk.Button(self, text="QUIT", fg="red",
