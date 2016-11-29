@@ -42,8 +42,8 @@ class Application(tk.Frame):
         self.airset = tk.Button(self)
         self.airset["text"] = "set pddl air side"
         self.airset["command"] = self.telnetair
-        self.Button1["width"] = 100
-        self.Button1["height"] = 50
+        self.airset["width"] = 100
+        self.airset["height"] = 50
         self.airset.pack(side="top")
 
         self.quit = tk.Button(self, text="QUIT", fg="red",
