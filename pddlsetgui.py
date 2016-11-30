@@ -8,6 +8,7 @@ import sys
 import os
 import tkinter as tk
 from tkinter import StringVar
+from tkinter import *
 
 version = [1,0]
 
@@ -328,26 +329,26 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        label = tk.Label(self, fg="blue", width=30, height=2, text="Input NetWorkID below").pack()
+        label = tk.Label(self, fg="blue", width=30, height=2, text="Input NetWorkID below",justify="left").grid(row=0)
         self.inputbox = tk.Entry(self)
         NetWorkID = StringVar()
         NetWorkID.set(b"11101L0001")
         self.inputbox.config(textvariable = NetWorkID)
-        self.inputbox.pack()
+        self.inputbox.grid(row=1)
 
         self.airset = tk.Button(self)
         self.airset["text"] = "set pddl air side"
         self.airset["command"] = self.telnetair
-        self.airset.pack(side="top")
+        self.airset.grid(row=1,column=1)
 
         self.grset = tk.Button(self)
         self.grset["text"] = "set pddl ground side"
         self.grset["command"] = self.telnetground
-        self.grset.pack(side="top")
+        self.grset.grid(row=2,column=1)
         
         self.quit = tk.Button(self, text="QUIT",
                               command=root.destroy)
-        self.quit.pack(side="bottom")
+        self.quit.grid(row=3,column=1)
 
     def telnetair(self):
         print("pddl")
@@ -368,13 +369,16 @@ class Application(tk.Frame):
         self.airset["state"] = "disable"
         self.grset["state"] = "disable"
 
+    #def plussnID(self):
+        
+
 
 ###########################################
 #       main process
 ###########################################
 root = tk.Tk()
 root.title("猞猁饲养指南") #title
-root.geometry("320x280")
+root.geometry("640x280")
 root.resizable(width=False, height=False)
 app = Application(master=root)
 app.mainloop()
