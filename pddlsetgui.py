@@ -42,16 +42,24 @@ class Application(tk.Frame):
         self.airset = tk.Button(self)
         self.airset["text"] = "set pddl air side"
         self.airset["command"] = self.telnetair
-        self.airset["width"] = 100
-        self.airset["height"] = 50
         self.airset.pack(side="top")
 
-        self.quit = tk.Button(self, text="QUIT", fg="red",
+        self.grset = tk.Button(self)
+        self.grset["text"] = "set pddl ground side"
+        self.grset["command"] = self.telnetground
+        self.grset.pack(side="top")
+        
+        self.quit = tk.Button(self, text="QUIT",
                               command=root.destroy)
         self.quit.pack(side="bottom")
 
     def telnetair(self):
         print("pddl")
+        self.quit["state"] = "disable"
+        
+    def telnetground(self):
+        print("ap01")
+        self.quit["state"] = "active"
 
 
 ###########################################
@@ -60,5 +68,6 @@ class Application(tk.Frame):
 root = tk.Tk()
 root.title("猞猁饲养指南") #title
 root.geometry("640x480")
+#root.resizable(width=False, height=False)
 app = Application(master=root)
 app.mainloop()
