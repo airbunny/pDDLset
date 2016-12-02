@@ -218,15 +218,26 @@ def TelnetProcess():
         print("Error 109");
         return False
 
-    #write #01 set
-    tn.write(b"at+mcct2=1024"+b"\n");
+    #write Seria timeout set
+    tn.write(b"at+mcct2=60"+b"\n");
     time.sleep(2);
     try:
         command = tn.read_until(b"OK");
-        print("#01 set sucsses!");
+        print("Seria timeout set sucsses!");
         drawline();
     except:
         print("Error 201");
+        return False
+
+    #write Seria packae size set
+    tn.write(b"at+mcmps2=1024"+b"\n");
+    time.sleep(2);
+    try:
+        command = tn.read_until(b"OK");
+        print("Seria packae size set sucsses!");
+        drawline();
+    except:
+        print("Error 961");
         return False
 
     #write #02 set
@@ -276,6 +287,17 @@ def TelnetProcess():
         print("Error 233");
         return False
 
+    #write RF txpower set
+    tn.write(b"at+mwtxpower=9"+b"\n");
+    time.sleep(2);
+    try:
+        command = tn.read_until(b"OK");
+        print("RF txpower set sucsses!");
+        drawline();
+    except:
+        print("Error 666");
+        return False
+
     #write RF mode set
     tn.write(b"at+mwvmode=0"+b"\n");
     time.sleep(2);
@@ -312,6 +334,16 @@ def TelnetProcess():
         print("Error 401");
         return False
 
+    #write new password set
+    tn.write(b"at+mspwd=123456,123456"+b"\n");
+    time.sleep(2);
+    try:
+        command = tn.read_until(b"OK");
+        print("new password set sucsses!");
+        drawline();
+    except:
+        print("Error 609");
+        return False
 
     #
     # Last move

@@ -41,16 +41,15 @@ elif pDDLType =="AP01":
 
 #default Network ID
 NetWorkID = "11101L249"
-TelnetIsRun = False
-Counter = 0
 
 #######################################
 #           Telnet process
 #######################################
-def TelnetProcess():
+def TelnetProcess(NWID):
     tn = telnetlib.Telnet()
     tn.set_debuglevel(2)
 
+    print ("Setting NetWorkID %s   password as %s    HOST as %s Tag as %s"%(NWID,PASSWORD,HOST,pDDLTarg));
     print ("Connecting...");
 
     #
@@ -193,8 +192,8 @@ def TelnetProcess():
         print("Error 109");
         return False
 
-    #write #01 set
-    tn.write(b"at+mcct2=1024"+b"\n");
+    #write Seria timeout set
+    tn.write(b"at+mcct2=60"+b"\n");
     time.sleep(2);
     try:
         command = tn.read_until(b"OK");
@@ -202,6 +201,17 @@ def TelnetProcess():
         drawline();
     except:
         print("Error 201");
+        return False
+
+    #write Seria packae size set
+    tn.write(b"at+mcmps2=1024"+b"\n");
+    time.sleep(2);
+    try:
+        command = tn.read_until(b"OK");
+        print("Seria packae size set sucsses!");
+        drawline();
+    except:
+        print("Error 961");
         return False
 
     #write #02 set
@@ -251,6 +261,17 @@ def TelnetProcess():
         print("Error 233");
         return False
 
+    #write RF txpower set
+    tn.write(b"at+mwtxpower=9"+b"\n");
+    time.sleep(2);
+    try:
+        command = tn.read_until(b"OK");
+        print("RF txpower set sucsses!");
+        drawline();
+    except:
+        print("Error 666");
+        return False
+
     #write RF mode set
     tn.write(b"at+mwvmode=0"+b"\n");
     time.sleep(2);
@@ -277,7 +298,7 @@ def TelnetProcess():
         return False
         
     #write network id.....
-    tn.write(b"at+mwnetworkid="+bytes(NetWorkID,encoding ="utf-8")+b"\n");
+    tn.write(b"at+mwnetworkid="+bytes(NWID,encoding ="utf-8")+b"\n");
     time.sleep(2);
     try:
         command = tn.read_until(b"OK");
@@ -286,7 +307,17 @@ def TelnetProcess():
     except:
         print("Error 401");
         return False
-
+    
+    #write new password set
+    tn.write(b"at+mspwd=123456,123456"+b"\n");
+    time.sleep(2);
+    try:
+        command = tn.read_until(b"OK");
+        print("new password set sucsses!");
+        drawline();
+    except:
+        print("Error 609");
+        return False
 
     #
     # final move
@@ -328,10 +359,14 @@ def TelnetProcess():
 #     thread function
 #########################################
 def threadfun():
-    while True: #ThreadIsRun.isSet():
+    #
+    while ThreadIsRun.isSet():
         time.sleep(1)
-        Counter +=  1
-        print("%d:2211334"%Counter)
+        if TelnetRun.isSet():
+            TelnetProcess(NetWorkID)
+            print("Net = %s"%NetWorkID)
+            TelnetRun.clear()
+            print("Telnet exit...")
     return
 
 #########################################
@@ -346,9 +381,9 @@ class Application(tk.Frame):
     def create_widgets(self):
         label = tk.Label(self, fg="blue", width=30, height=2, text="Input NetWorkID below",justify="left").grid(row=0)
         self.inputbox = tk.Entry(self)
-        NetWorkID = StringVar()
-        NetWorkID.set(b"11101L0001")
-        self.inputbox.config(textvariable = NetWorkID)
+        textid = StringVar()
+        textid.set(b"11101L0001")
+        self.inputbox.config(textvariable = textid)
         self.inputbox.grid(row=1)
 
         self.airset = tk.Button(self)
@@ -373,14 +408,22 @@ class Application(tk.Frame):
         #ThreadIsRun = False
         ThreadIsRun.clear()
         root.destroy()
+
     #set pddl as airside
     def telnetair(self):
         #when telnet client is working disable all button to keeping safe 
         self.disableall()
         #set paraments to air side
+        global NetWorkID
+        global pDDLTarg
+        global HOST
+        global PASSWORD
+        PASSWORD = oldpass
         pDDLTarg = "Air"
+        HOST = "192.168.168.1"
+        NetWorkID = self.inputbox.get()
         #and just start working...
-        TelnetIsRun = True
+        TelnetRun.set()
         #enable button after working
 
     #set pddl as groundside
@@ -388,11 +431,16 @@ class Application(tk.Frame):
         #when telnet client is working disable all button to keeping safe 
         self.disableall()
         #set paraments to air side
+        global NetWorkID
+        global pDDLTarg
+        global HOST
+        global PASSWORD
+        PASSWORD = otherpass
         pDDLTarg = "Ground"
+        HOST = "192.168.1.11"
+        NetWorkID = self.inputbox.get()
         #and just start working...
-        TelnetProcess()
-        #TelnetIsRun = True
-        print("test")
+        TelnetRun.set()
         #enable button after working
 
     #enable all button after telnet work
@@ -405,8 +453,10 @@ class Application(tk.Frame):
         self.grset["state"] = "disable"
 
     def setmessagebox(self):
-        messagebox.showinfo("猞猁饲养指南","Password:%s  IP:%s"%(PASSWORD,HOST)) 
-        messagebox.showinfo("猞猁饲养指南","what?%d"%thread.isAlive())
+        global NetWorkID
+        NetWorkID = self.inputbox.get()
+        messagebox.showinfo("猞猁饲养指南","Password:%s  IP:%s  Network ID: %s"%(PASSWORD,HOST,NetWorkID)) 
+
         TelnetRun.clear()   
 
 
@@ -415,11 +465,10 @@ class Application(tk.Frame):
 ###########################################
 
 # 条件变量
-#con = threading.Condition()
 ThreadIsRun = threading.Event()
 TelnetRun = threading.Event()
 ThreadIsRun.set()
-TelnetRun.set()
+TelnetRun.clear()
 thread = threading.Thread(target=threadfun)
 thread.start()
 
