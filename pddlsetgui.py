@@ -40,7 +40,7 @@ elif pDDLType =="AP01":
     PASSWORD = otherpass
 
 #default Network ID
-NetWorkID = "11101L249"
+NetWorkID = "11101L0001"
 
 #######################################
 #           Telnet process
@@ -262,7 +262,7 @@ def TelnetProcess(NWID):
         return False
 
     #write RF txpower set
-    tn.write(b"at+mwtxpower=9"+b"\n");
+    tn.write(b"at+mwtxpower=28"+b"\n");#paramenter 28 used in new firmware
     time.sleep(2);
     try:
         command = tn.read_until(b"OK");
@@ -273,7 +273,10 @@ def TelnetProcess(NWID):
         return False
 
     #write RF mode set
-    tn.write(b"at+mwvmode=0"+b"\n");
+    if pDDLTarg == "Ground":
+        tn.write(b"at+mwvmode=1"+b"\n");
+    elif pDDLTarg == "Air":
+        tn.write(b"at+mwvmode=0"+b"\n");
     time.sleep(2);
     try:
         command = tn.read_until(b"OK");

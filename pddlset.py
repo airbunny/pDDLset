@@ -8,7 +8,7 @@ import sys
 import os
 #from __future__ import print_function
 
-version = [1,0]
+version = [1,2]
 
 #define
 HostType = "NEWPRODUCT"
@@ -394,6 +394,7 @@ def shallall():
 #######################################
 def help():
     boxprint("PowerEye help");
+    print("version %d.%d                        "%(version[0],version[1]));
     print("airset                           Set up Air side pDDL ");
     print("gset                             Set up Ground side pDDL ");
     print("help                             Print help in the Shell ");
