@@ -18,6 +18,7 @@ version = [1,0]
 HostType = "NEWPRODUCT"
 pDDLType = "New"
 pDDLTarg = "Air"
+OldFarmware = False
 
 username = b"admin"
 oldpass = b"admin"
@@ -41,6 +42,7 @@ elif pDDLType =="AP01":
 
 #default Network ID
 NetWorkID = "11101L0001"
+#Var = IntVar()
 
 #######################################
 #           Telnet process
@@ -401,11 +403,15 @@ class Application(tk.Frame):
         self.showset = tk.Button(self)
         self.showset["text"] = "show set"
         self.showset["command"] = self.setmessagebox
-        self.showset.grid(row=5,column=1)
-        
+        self.showset.grid(row=3,column=1)
+
         self.quit = tk.Button(self, text="QUIT",
                               command=self.quitbox)
-        self.quit.grid(row=3,column=1)
+        self.quit.grid(row=4,column=1)
+
+       
+        self.checkb = tk.Checkbutton(text = "使用旧固件")
+        self.checkb.pack()
     
     def quitbox(self):
         #ThreadIsRun = False
@@ -457,8 +463,10 @@ class Application(tk.Frame):
 
     def setmessagebox(self):
         global NetWorkID
+        global OldFarmware
         NetWorkID = self.inputbox.get()
-        messagebox.showinfo("猞猁饲养指南","Password:%s  IP:%s  Network ID: %s"%(PASSWORD,HOST,NetWorkID)) 
+        OldFarmware = self.checkb.getvar()
+        messagebox.showinfo("猞猁饲养指南","Password:%s  IP:%s  Network ID: %s   Use old Firmware: %s"%(PASSWORD,HOST,NetWorkID,OldFirmware)) 
 
         TelnetRun.clear()   
 
@@ -477,7 +485,7 @@ thread.start()
 
 root = tk.Tk()
 root.title("猞猁饲养指南") #title
-root.geometry("640x280")
+root.geometry("380x220")
 root.resizable(width=False, height=False)
 app = Application(master=root)
 app.mainloop()
