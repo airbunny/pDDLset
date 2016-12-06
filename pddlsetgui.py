@@ -387,7 +387,7 @@ class Application(tk.Frame):
         self.create_widgets()
 
     def create_widgets(self):
-        label = tk.Label(self, fg="blue", width=30, height=2, text="Input NetWorkID below",justify="left").grid(row=0)
+        label = tk.Label(self, fg="blue", width=30, height=2, text="在下方输入机体SN码",justify="left").grid(row=0)
         self.inputbox = tk.Entry(self)
         textid = StringVar()
         textid.set(b"11101L0001")
@@ -395,20 +395,20 @@ class Application(tk.Frame):
         self.inputbox.grid(row=1)
 
         self.airset = tk.Button(self)
-        self.airset["text"] = "set pddl air side"
+        self.airset["text"] = "设置pDDL空中端"
         self.airset["command"] = self.telnetair
         self.airset.grid(row=1,column=1)
 
         self.grset = tk.Button(self)
-        self.grset["text"] = "set pddl ground side"
+        self.grset["text"] = "设置基站"
         self.grset["command"] = self.telnetground
         self.grset.grid(row=2,column=1)
         self.showset = tk.Button(self)
-        self.showset["text"] = "show set"
+        self.showset["text"] = "显示当前设置"
         self.showset["command"] = self.setmessagebox
         self.showset.grid(row=3,column=1)
 
-        self.quit = tk.Button(self, text="QUIT",
+        self.quit = tk.Button(self, text="退出",
                               command=self.quitbox)
         self.quit.grid(row=4,column=1)
 
@@ -496,7 +496,7 @@ thread = threading.Thread(target=threadfun)
 thread.start()
 
 root = tk.Tk()
-root.title("猞猁饲养指南") #title
+root.title("PowerEye--pDDL设置系统") #title
 root.geometry("380x220")
 root.resizable(width=False, height=False)
 app = Application(master=root)
