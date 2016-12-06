@@ -12,7 +12,7 @@ from tkinter import messagebox
 from tkinter import StringVar
 from tkinter import *
 
-version = [1,0]
+version = [1,2]
 
 #define
 HostType = "NEWPRODUCT"
@@ -42,7 +42,7 @@ elif pDDLType =="AP01":
 
 #default Network ID
 NetWorkID = "11101L0001"
-#Var = IntVar()
+
 
 #######################################
 #           Telnet process
@@ -51,7 +51,7 @@ def TelnetProcess(NWID):
     tn = telnetlib.Telnet()
     tn.set_debuglevel(2)
 
-    print ("Setting NetWorkID %s   password as %s    HOST as %s Tag as %s"%(NWID,PASSWORD,HOST,pDDLTarg));
+    print ("Setting NetWorkID %s   password as %s    HOST as %s Tag as %s   Old Farmware is %d"%(NWID,PASSWORD,HOST,pDDLTarg,OldFarmware));
     print ("Connecting...");
 
     #
@@ -264,7 +264,10 @@ def TelnetProcess(NWID):
         return False
 
     #write RF txpower set
-    tn.write(b"at+mwtxpower=28"+b"\n");#paramenter 28 used in new firmware
+    if OldFarmware == 1:
+        tn.write(b"at+mwtxpower=9"+b"\n");#paramenter 9 used in too old firmware
+    else:
+        tn.write(b"at+mwtxpower=28"+b"\n");#paramenter 28 used in new firmware
     time.sleep(2);
     try:
         command = tn.read_until(b"OK");
@@ -409,8 +412,8 @@ class Application(tk.Frame):
                               command=self.quitbox)
         self.quit.grid(row=4,column=1)
 
-       
-        self.checkb = tk.Checkbutton(text = "使用旧固件")
+        self.Var = IntVar()
+        self.checkb = tk.Checkbutton(text = "使用旧固件",variable=self.Var)
         self.checkb.pack()
     
     def quitbox(self):
@@ -427,10 +430,15 @@ class Application(tk.Frame):
         global pDDLTarg
         global HOST
         global PASSWORD
+        global OldFarmware
         PASSWORD = oldpass
         pDDLTarg = "Air"
         HOST = "192.168.168.1"
         NetWorkID = self.inputbox.get()
+        if self.Var.get() == 1:
+            OldFarmware = 1
+        else:
+            OldFarmware = 0
         #and just start working...
         TelnetRun.set()
         #enable button after working
@@ -443,11 +451,16 @@ class Application(tk.Frame):
         global NetWorkID
         global pDDLTarg
         global HOST
-        global PASSWORD
+        global PASSWORD        
+        global OldFarmware
         PASSWORD = otherpass
         pDDLTarg = "Ground"
         HOST = "192.168.1.11"
         NetWorkID = self.inputbox.get()
+        if self.Var.get() == 1:
+            OldFarmware = 1
+        else:
+            OldFarmware = 0
         #and just start working...
         TelnetRun.set()
         #enable button after working
@@ -463,10 +476,9 @@ class Application(tk.Frame):
 
     def setmessagebox(self):
         global NetWorkID
-        global OldFarmware
         NetWorkID = self.inputbox.get()
-        OldFarmware = self.checkb.getvar()
-        messagebox.showinfo("猞猁饲养指南","Password:%s  IP:%s  Network ID: %s   Use old Firmware: %s"%(PASSWORD,HOST,NetWorkID,OldFirmware)) 
+        farmware = self.Var.get()
+        messagebox.showinfo("猞猁饲养指南","Password:%s  IP:%s  Network ID: %s   Use old Firmware: %s"%(PASSWORD,HOST,NetWorkID,farmware)) 
 
         TelnetRun.clear()   
 
